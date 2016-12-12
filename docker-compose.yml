@@ -18,10 +18,13 @@ services:
             args:
                 - INSTALL_XDEBUG=false
                 - INSTALL_MONGO=false
-                - INSTALL_NODE=false
-                - INSTALL_YARN=false
+                - INSTALL_NODE=true
+                - INSTALL_YARN=true
                 - INSTALL_DRUSH=false
                 - INSTALL_AEROSPIKE_EXTENSION=false
+                - INSTALL_JDK8=true
+                - INSTALL_TF=true
+                - INSTALL_SUPERVISOR=true
                 - COMPOSER_GLOBAL_INSTALL=false
                 - INSTALL_WORKSPACE_SSH=false
                 - PUID=1000
@@ -35,6 +38,7 @@ services:
             - "dockerhost:10.0.75.1"
         ports:
            - "2222:22"
+           - "6001:6001"
         tty: true
 
 ### PHP-FPM Container #######################################

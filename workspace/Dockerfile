@@ -245,6 +245,51 @@ USER laradock
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
 
+
+#####################################
+# JDK8:
+#####################################
+USER root
+ARG INSTALL_JDK8=false
+ENV INSTALL_JDK8 ${INSTALL_JDK8}
+RUN if [ ${INSTALL_JDK8} = true ]; then \
+    apt-get update && \
+    apt-get install -y openjdk-8-jdk \
+;fi
+
+#####################################
+# PIP Python and Tensorflow:
+#####################################
+USER root
+ARG INSTALL_TF=false
+ENV INSTALL_TF ${INSTALL_TF}
+RUN if [ ${INSTALL_TF} = true ]; then \
+    apt-get update && \
+    apt-get install -y libjasper-dev python-pip python-dev && \
+    export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.11.0rc0-cp27-none-linux_x86_64.whl && \
+    pip install --upgrade $TF_BINARY_URL \
+;fi
+
+#####################################
+# PHP Supervisor:
+#####################################
+USER root
+ARG INSTALL_SUPERVISOR=false
+ENV INSTALL_SUPERVISOR ${INSTALL_SUPERVISOR}
+RUN if [ ${INSTALL_SUPERVISOR} = true ]; then \
+    apt-get update && \
+    apt-get install -y supervisor \
+;fi
+
+COPY ./supervisor/echo-server.conf /etc/supervisor/conf.d/echo-server.conf
+COPY ./supervisor/image-message.conf /etc/supervisor/conf.d/image-message.conf
+COPY ./supervisor/image-process.conf /etc/supervisor/conf.d/image-process.conf
+COPY ./supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+RUN mkdir -p /var/log/supervisor
+
+CMD ["/usr/bin/supervisord"]
+
 #
 #--------------------------------------------------------------------------
 # Final Touch
